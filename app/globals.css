@@ -28,6 +28,8 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-cairo), sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 h1,
@@ -73,4 +75,11 @@ tbody tr {
 
 tbody tr:hover {
   background: #1f2126;
+}
+
+@media (max-width: 640px) {
+  th, td {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
 }

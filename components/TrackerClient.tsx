@@ -69,8 +69,16 @@ export function TrackerClient({
 
   return (
     <div>
-      {message && <div className="mb-3 rounded-lg border border-accent bg-accent-dim px-4 py-3 text-sm text-accent">{message}</div>}
-      {pending && <div className="mb-3 rounded-lg border border-line bg-raised px-4 py-3 text-sm text-muted">جاري الحفظ...</div>}
+      {message && (
+        <div className="mb-3 rounded-lg border border-accent bg-accent-dim px-3 py-2.5 text-sm text-accent">
+          {message}
+        </div>
+      )}
+      {pending && (
+        <div className="mb-3 rounded-lg border border-line bg-raised px-3 py-2.5 text-sm text-muted">
+          جاري الحفظ...
+        </div>
+      )}
 
       {exercises.map((exercise) => {
         const showDay = exercise.day !== lastDay;
@@ -82,67 +90,92 @@ export function TrackerClient({
         return (
           <div key={exercise.id}>
             {showDay && (
-              <h3 className="mb-2 mt-[22px] text-sm text-muted">
-                اليوم {exercise.day} - {exercise.dayTitle}
+              <h3 className="mb-2 mt-4 sm:mt-[22px] text-xs sm:text-sm font-bold text-muted uppercase tracking-wide">
+                اليوم {exercise.day} — {exercise.dayTitle}
               </h3>
             )}
-            <section className="mb-2.5 overflow-hidden rounded-xl border border-line bg-surface">
-              <div className="border-b border-line bg-raised px-4 py-3">
-                <div className="text-[14.5px] font-bold">{exercise.name}</div>
-                <div className="text-[12.5px] text-muted">
-                  {exercise.sets} × {exercise.reps}
-                  <span className="me-1.5 inline-block rounded-full bg-accent-dim px-2 py-0.5 text-[11px] font-semibold text-accent">
+
+            <section className="mb-2 overflow-hidden rounded-xl border border-line bg-surface">
+              {/* Exercise header */}
+              <div className="border-b border-line bg-raised px-3 sm:px-4 py-2.5 sm:py-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="text-[13.5px] sm:text-[14.5px] font-bold leading-snug">{exercise.name}</div>
+                    <div className="mt-0.5 text-[11px] sm:text-[12.5px] text-muted">
+                      {exercise.sets} × {exercise.reps}
+                    </div>
+                  </div>
+                  <span className="shrink-0 mt-0.5 rounded-full bg-accent-dim px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold text-accent">
                     {exercise.group}
                   </span>
                 </div>
               </div>
 
-              <div className="px-4 pb-3.5 pt-2.5">
-                <div className="flex flex-wrap items-center gap-2 border-t border-line py-2.5">
+              {/* Input row */}
+              <div className="px-3 sm:px-4 pt-2.5 pb-3">
+                <div className="flex items-center gap-2">
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="0.5"
                     placeholder="كيلو"
                     value={current.weight}
-                    onChange={(event) => setInputs((existing) => ({ ...existing, [exercise.id]: { ...current, weight: event.target.value } }))}
-                    className="num w-0 flex-1 min-w-[70px] sm:w-[78px] sm:flex-none rounded-md border border-line bg-raised px-2.5 py-2 text-[13px] text-text outline-none transition placeholder:text-[#565a63] focus:border-gold"
+                    onChange={(e) =>
+                      setInputs((prev) => ({ ...prev, [exercise.id]: { ...current, weight: e.target.value } }))
+                    }
+                    className="num min-w-0 flex-1 rounded-md border border-line bg-raised px-2.5 py-2 text-[13px] text-text outline-none transition placeholder:text-[#565a63] focus:border-gold"
                   />
                   <input
                     type="number"
-                    placeholder="عدد تكرارات"
+                    inputMode="numeric"
+                    placeholder="تكرار"
                     value={current.reps}
-                    onChange={(event) => setInputs((existing) => ({ ...existing, [exercise.id]: { ...current, reps: event.target.value } }))}
-                    className="num w-0 flex-[1.3] min-w-[90px] sm:w-28 sm:flex-none rounded-md border border-line bg-raised px-2.5 py-2 text-[13px] text-text outline-none transition placeholder:text-[#565a63] focus:border-gold"
+                    onChange={(e) =>
+                      setInputs((prev) => ({ ...prev, [exercise.id]: { ...current, reps: e.target.value } }))
+                    }
+                    className="num min-w-0 flex-[1.2] rounded-md border border-line bg-raised px-2.5 py-2 text-[13px] text-text outline-none transition placeholder:text-[#565a63] focus:border-gold"
                   />
                   <button
                     onClick={() => saveLog(exercise.id)}
                     disabled={pending}
-                    className="rounded-md bg-accent px-3.5 py-2 text-[13px] font-bold text-white transition hover:bg-[#c73438] disabled:cursor-wait disabled:opacity-70 flex-none"
+                    className="shrink-0 rounded-md bg-accent px-3 sm:px-3.5 py-2 text-[13px] font-bold text-white transition hover:bg-[#c73438] disabled:cursor-wait disabled:opacity-70"
                   >
                     حفظ
                   </button>
                 </div>
 
-                <div className="mt-2 flex flex-col gap-1.5">
-                  {history.length ? (
-                    history.map((log) => {
+                {/* History */}
+                {history.length > 0 && (
+                  <div className="mt-2 flex flex-col gap-1">
+                    {history.map((log) => {
                       const isPr = Number(log.weight) === best && best > 0;
                       return (
-                        <div key={log.id} className="flex items-center justify-between gap-2 rounded-md bg-raised px-2.5 py-1.5 text-[12.5px] text-muted">
-                          <span className="num">{log.logged_at}</span>
-                          <span>
-                            <b className={isPr ? "text-ok" : "text-text"}>{log.weight} كجم</b> × {log.reps ?? "-"} تكرار {isPr ? " 🏆" : ""}
+                        <div
+                          key={log.id}
+                          className="flex items-center justify-between gap-1.5 rounded-md bg-raised px-2.5 py-1.5"
+                        >
+                          <span className="num text-[11px] text-muted shrink-0">{log.logged_at}</span>
+                          <span className="text-[12px] text-center flex-1">
+                            <b className={isPr ? "text-ok" : "text-text"}>{log.weight} كجم</b>
+                            <span className="text-muted"> × {log.reps ?? "-"}</span>
+                            {isPr && " 🏆"}
                           </span>
-                          <button onClick={() => deleteLog(log.id)} className="px-1 font-bold text-[#6b6f78] transition hover:text-accent" aria-label="حذف السجل">
+                          <button
+                            onClick={() => deleteLog(log.id)}
+                            className="shrink-0 px-1 font-bold text-[#6b6f78] transition hover:text-accent text-base leading-none"
+                            aria-label="حذف السجل"
+                          >
                             ×
                           </button>
                         </div>
                       );
-                    })
-                  ) : (
-                    <div className="py-1 text-xs text-[#565a63]">لسه مفيش سجل - سجّل أول وزن</div>
-                  )}
-                </div>
+                    })}
+                  </div>
+                )}
+
+                {history.length === 0 && (
+                  <div className="mt-2 text-[11px] text-[#565a63]">لسه مفيش سجل - سجّل أول وزن</div>
+                )}
               </div>
             </section>
           </div>

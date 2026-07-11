@@ -41,35 +41,35 @@ export default async function LeaderboardPage() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-[760px]">
+        <table className="min-w-[540px] sm:min-w-full table-fixed sm:table-auto">
           <thead>
-            <tr>
-              <th>التمرين</th>
+            <tr className="bg-raised">
+              <th className="sticky right-0 z-10 bg-raised border-l border-line w-[120px] min-w-[120px] sm:w-[200px] sm:min-w-[200px] pr-4 text-right">التمرين</th>
               {profileRows.map((profile) => (
-                <th key={profile.id}>{profile.display_name}</th>
+                <th key={profile.id} className="text-center px-1 py-3 text-xs sm:text-sm font-bold">{profile.display_name}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {exercises.map((exercise) => (
-              <tr key={exercise.id}>
-                <td className="font-semibold">
-                  <div>{exercise.name}</div>
-                  <div className="text-[11px] text-muted">
-                    اليوم {exercise.day} - {exercise.sets} × {exercise.reps}
+              <tr key={exercise.id} className="group border-t border-line hover:bg-[#1f2126] transition-colors">
+                <td className="sticky right-0 z-10 bg-surface group-hover:bg-[#1f2126] border-l border-line transition-colors font-semibold pr-4 py-3 w-[120px] min-w-[120px] sm:w-[200px] sm:min-w-[200px] text-right">
+                  <div className="truncate text-xs sm:text-sm" title={exercise.name}>{exercise.name}</div>
+                  <div className="text-[10px] sm:text-[11px] text-muted font-normal mt-0.5">
+                    اليوم {exercise.day} - {exercise.sets}×{exercise.reps}
                   </div>
                 </td>
                 {profileRows.map((profile) => {
                   const pr = prByUserAndExercise[profile.id]?.[exercise.id];
                   return (
-                    <td key={profile.id} className="num">
+                    <td key={profile.id} className="text-center num px-1 py-3">
                       {pr ? (
-                        <span>
-                          <b className="text-ok">{pr.weight} كجم</b>
-                          <span className="text-muted"> × {pr.reps ?? "-"}</span>
-                        </span>
+                        <div className="flex flex-col items-center justify-center gap-0.5">
+                          <b className="text-ok text-xs sm:text-sm">{pr.weight} كجم</b>
+                          <span className="text-muted text-[10px] sm:text-xs">× {pr.reps ?? "-"}</span>
+                        </div>
                       ) : (
-                        <span className="text-[#565a63]">-</span>
+                        <span className="text-[#3b3e45]">-</span>
                       )}
                     </td>
                   );

@@ -105,19 +105,19 @@ export function TrackerClient({
                     placeholder="كيلو"
                     value={current.weight}
                     onChange={(event) => setInputs((existing) => ({ ...existing, [exercise.id]: { ...current, weight: event.target.value } }))}
-                    className="num w-[78px] rounded-md border border-line bg-raised px-2.5 py-2 text-[13px] text-text outline-none transition placeholder:text-[#565a63] focus:border-gold"
+                    className="num w-0 flex-1 min-w-[70px] sm:w-[78px] sm:flex-none rounded-md border border-line bg-raised px-2.5 py-2 text-[13px] text-text outline-none transition placeholder:text-[#565a63] focus:border-gold"
                   />
                   <input
                     type="number"
                     placeholder="عدد تكرارات"
                     value={current.reps}
                     onChange={(event) => setInputs((existing) => ({ ...existing, [exercise.id]: { ...current, reps: event.target.value } }))}
-                    className="num w-28 rounded-md border border-line bg-raised px-2.5 py-2 text-[13px] text-text outline-none transition placeholder:text-[#565a63] focus:border-gold"
+                    className="num w-0 flex-[1.3] min-w-[90px] sm:w-28 sm:flex-none rounded-md border border-line bg-raised px-2.5 py-2 text-[13px] text-text outline-none transition placeholder:text-[#565a63] focus:border-gold"
                   />
                   <button
                     onClick={() => saveLog(exercise.id)}
                     disabled={pending}
-                    className="rounded-md bg-accent px-3.5 py-2 text-[13px] font-bold text-white transition hover:bg-[#c73438] disabled:cursor-wait disabled:opacity-70"
+                    className="rounded-md bg-accent px-3.5 py-2 text-[13px] font-bold text-white transition hover:bg-[#c73438] disabled:cursor-wait disabled:opacity-70 flex-none"
                   >
                     حفظ
                   </button>

@@ -43,7 +43,7 @@ export function LoginPinForm({ profiles }: { profiles: PublicProfile[] }) {
       </div>
 
       <div className="p-[18px]">
-        <div className="mb-5 grid grid-cols-2 gap-2 sm:grid-cols-5">
+        <div className="mb-5 grid grid-cols-3 gap-2 sm:grid-cols-5">
           {profiles.map((profile) => (
             <button
               key={profile.id}

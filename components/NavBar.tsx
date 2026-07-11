@@ -30,7 +30,7 @@ export function NavBar({
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-lg border px-3 py-2.5 text-center text-sm font-bold transition ${
+                className={`rounded-lg border px-2 py-2 text-center text-xs sm:px-3 sm:py-2.5 sm:text-sm font-bold transition ${
                   isActive
                     ? "border-accent bg-accent text-white"
                     : "border-line bg-surface text-muted hover:border-[#3a3d45] hover:text-text"

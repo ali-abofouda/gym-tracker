@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>برنامج التمرين + متابعة الأوزان</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#131417;
+    --surface:#1b1d22;
+    --surface-raised:#212328;
+    --line:#2c2f36;
+    --text:#ECEDEE;
+    --muted:#8A8F98;
+    --accent:#E5484D;
+    --accent-dim:#4a1e20;
+    --gold:#D9A441;
+    --ok:#3FB27F;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Cairo',sans-serif;
+    padding:24px 16px 60px;
+  }
+  h1,h2,h3,.disp{font-family:'Oswald',sans-serif; letter-spacing:.5px;}
+  .num{font-family:'JetBrains Mono',monospace;}
+
+  .wrap{max-width:980px; margin:0 auto;}
+
+  .hero{
+    display:flex; align-items:center; justify-content:space-between;
+    border-bottom:1px solid var(--line); padding-bottom:18px; margin-bottom:22px;
+    flex-wrap:wrap; gap:10px;
+  }
+  .hero .eyebrow{color:var(--accent); font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:2px; text-transform:uppercase;}
+  .hero h1{font-size:28px; margin:2px 0 0; color:var(--text); font-weight:700;}
+  .split-badge{
+    display:flex; gap:6px;
+  }
+  .split-badge span{
+    width:26px;height:26px;border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono'; font-size:11px; font-weight:700;
+    background:var(--surface); border:1px solid var(--line); color:var(--muted);
+  }
+  .split-badge span.on{background:var(--accent-dim); border-color:var(--accent); color:var(--accent);}
+
+  .tabs{display:flex; gap:8px; margin-bottom:22px; flex-wrap:wrap;}
+  .tab{
+    padding:9px 16px; border-radius:8px; cursor:pointer; user-select:none;
+    background:var(--surface); border:1px solid var(--line); color:var(--muted);
+    font-size:14px; font-weight:600; transition:.15s;
+  }
+  .tab:hover{color:var(--text); border-color:#3a3d45;}
+  .tab.active{background:var(--accent); color:#fff; border-color:var(--accent);}
+
+  .day-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    margin-bottom:14px; overflow:hidden;
+  }
+  .day-head{
+    display:flex; align-items:center; gap:12px; padding:14px 18px;
+    border-bottom:1px solid var(--line); background:var(--surface-raised);
+  }
+  .day-num{
+    font-family:'Oswald'; font-weight:700; font-size:20px; color:var(--accent);
+    width:34px; height:34px; border:1px solid var(--accent); border-radius:8px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .day-num.rest{color:var(--muted); border-color:var(--line);}
+  .day-title{font-weight:700; font-size:16px;}
+  .day-sub{color:var(--muted); font-size:12.5px;}
+
+  table{width:100%; border-collapse:collapse;}
+  th,td{padding:10px 14px; text-align:right; font-size:14px;}
+  th{color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px;}
+  tbody tr{border-top:1px solid var(--line);}
+  tbody tr:hover{background:#1f2126;}
+  .exname{font-weight:600;}
+  .tag{
+    display:inline-block; font-size:11px; padding:2px 8px; border-radius:20px;
+    background:var(--accent-dim); color:var(--accent); font-weight:600; margin-inline-start:6px;
+  }
+  .rest-note{padding:18px; color:var(--muted); font-size:14px;}
+
+  .person-grid{display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;}
+  .person-chip{
+    padding:8px 14px; border-radius:9px; background:var(--surface); border:1px solid var(--line);
+    cursor:pointer; font-weight:700; font-size:14px; color:var(--muted); display:flex; align-items:center; gap:6px;
+  }
+  .person-chip.active{border-color:var(--gold); color:var(--gold); background:#2a2210;}
+
+  .editname{
+    background:transparent; border:none; border-bottom:1px dashed var(--line); color:var(--text);
+    font-family:'Oswald'; font-size:22px; font-weight:600; padding:2px 4px; margin-bottom:16px; width:auto;
+  }
+  .editname:focus{outline:none; border-color:var(--gold);}
+
+  .log-row{display:flex; gap:8px; align-items:center; padding:10px 0; border-top:1px solid var(--line); flex-wrap:wrap;}
+  .log-row input{
+    background:var(--surface-raised); border:1px solid var(--line); color:var(--text);
+    border-radius:6px; padding:7px 9px; font-family:'JetBrains Mono'; font-size:13px; width:78px;
+  }
+  .log-row input:focus{outline:none; border-color:var(--gold);}
+  .log-row button{
+    background:var(--accent); color:#fff; border:none; border-radius:6px; padding:8px 14px;
+    font-weight:700; font-size:13px; cursor:pointer; font-family:'Cairo';
+  }
+  .log-row button:hover{background:#c73438;}
+  .hist{margin-top:8px; display:flex; flex-direction:column; gap:5px;}
+  .hist-item{
+    display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted);
+    background:var(--surface-raised); padding:6px 10px; border-radius:6px;
+  }
+  .hist-item b{color:var(--text);}
+  .hist-item .pr{color:var(--ok); font-weight:700;}
+  .del{cursor:pointer; color:#6b6f78; font-weight:700; padding:0 4px;}
+  .del:hover{color:var(--accent);}
+  .empty-hist{font-size:12px; color:#565a63; padding:4px 0;}
+
+  .loading{text-align:center; padding:40px; color:var(--muted);}
+  .foot-note{text-align:center; color:#565a63; font-size:12px; margin-top:30px;}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Weekly Split — Bro Split Hybrid</div>
+      <h1>برنامج التمرين الأسبوعي</h1>
+    </div>
+    <div class="split-badge" id="splitBadge"></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-view="program">📋 البرنامج</div>
+    <div class="tab" data-view="tracker">📈 متابعة الأوزان</div>
+  </div>
+
+  <div id="programView"></div>
+  <div id="trackerView" style="display:none;"></div>
+
+  <div class="foot-note">البيانات بتتحفظ تلقائيًا في المتصفح — لو فتحت الأداة من جهاز تاني، الأرقام بتبدأ من جديد.</div>
+</div>
+
+<script>
+const PROGRAM = [
+  {day:1, title:"صدر + تراي خفيف", rest:false, exercises:[
+    {id:"d1e1", name:"بنش برس مسطح (بار)", sets:"4", reps:"6-10", group:"صدر"},
+    {id:"d1e2", name:"إنكلاين دمبل برس", sets:"3", reps:"8-12", group:"صدر"},
+    {id:"d1e3", name:"كابل فلاي / بيك ديك", sets:"3", reps:"12-15", group:"صدر"},
+    {id:"d1e4", name:"ديبس (تركيز صدر)", sets:"3", reps:"8-12", group:"صدر"},
+    {id:"d1e5", name:"Chest Press Machine", sets:"3", reps:"10-12", group:"صدر"},
+    {id:"d1e6", name:"Triceps Pushdown", sets:"3", reps:"10-15", group:"تراي خفيف"},
+    {id:"d1e7", name:"Overhead Triceps Extension", sets:"3", reps:"10-15", group:"تراي خفيف"},
+  ]},
+  {day:2, title:"ظهر + باي خفيف", rest:false, exercises:[
+    {id:"d2e1", name:"ديدليفت / لات بولداون واسع", sets:"4", reps:"6-10", group:"ظهر"},
+    {id:"d2e2", name:"بار رو / كابل رو", sets:"3", reps:"8-12", group:"ظهر"},
+    {id:"d2e3", name:"بول أب / لات بولداون", sets:"3", reps:"8-12", group:"ظهر"},
+    {id:"d2e4", name:"Face Pull / رير ديلت رو", sets:"3", reps:"12-15", group:"ظهر"},
+    {id:"d2e5", name:"T-Bar Row", sets:"3", reps:"8-12", group:"ظهر"},
+    {id:"d2e6", name:"EZ Bar Curl", sets:"3", reps:"8-12", group:"باي خفيف"},
+    {id:"d2e7", name:"Hammer Curl", sets:"3", reps:"10-15", group:"باي خفيف"},
+  ]},
+  {day:3, title:"راحة", rest:true, exercises:[]},
+  {day:4, title:"كتف", rest:false, exercises:[
+    {id:"d4e1", name:"Overhead Press (بار / دمبل)", sets:"4", reps:"6-10", group:"كتف أمامي/جانبي"},
+    {id:"d4e2", name:"لاترال رايز", sets:"4", reps:"12-15", group:"كتف جانبي"},
+    {id:"d4e3", name:"رير ديلت فلاي", sets:"3", reps:"12-15", group:"كتف خلفي"},
+    {id:"d4e4", name:"فرونت رايز", sets:"3", reps:"12-15", group:"كتف أمامي"},
+    {id:"d4e5", name:"شرَج (ترابيس)", sets:"3", reps:"10-15", group:"ترابيس"},
+  ]},
+  {day:5, title:"رجل", rest:false, exercises:[
+    {id:"d5e1", name:"سكوات (بار)", sets:"4", reps:"6-10", group:"كوادرسبس"},
+    {id:"d5e2", name:"ليج برس", sets:"3", reps:"10-15", group:"كوادرسبس"},
+    {id:"d5e3", name:"رومانيان ديدليفت", sets:"3", reps:"8-12", group:"هامسترينج"},
+    {id:"d5e4", name:"ليج كيرل", sets:"3", reps:"10-15", group:"هامسترينج"},
+    {id:"d5e5", name:"ليج إكستنشن", sets:"3", reps:"12-15", group:"كوادرسبس"},
+    {id:"d5e6", name:"كالف رايز", sets:"4", reps:"12-20", group:"سمانة"},
+  ]},
+  {day:6, title:"ذراع كامل: باي + تراي", rest:false, exercises:[
+    {id:"d6e1", name:"بار كيرل", sets:"3", reps:"8-12", group:"باي"},
+    {id:"d6e2", name:"إنكلاين دمبل كيرل", sets:"3", reps:"10-15", group:"باي"},
+    {id:"d6e3", name:"كونسنتريشن كيرل", sets:"2", reps:"12-15", group:"باي"},
+    {id:"d6e4", name:"Close Grip Bench Press", sets:"3", reps:"8-12", group:"تراي"},
+    {id:"d6e5", name:"سكال كراشر", sets:"3", reps:"10-15", group:"تراي"},
+    {id:"d6e6", name:"Cable Kickback", sets:"2", reps:"12-15", group:"تراي"},
+    {id:"d6e7", name:"Reverse Barbell Curl (ساعد)", sets:"3", reps:"10-15", group:"ساعد"},
+    {id:"d6e8", name:"Barbell Wrist Curl (معصم)", sets:"3", reps:"15-20", group:"معصم"},
+  ]},
+  {day:7, title:"راحة", rest:true, exercises:[]},
+];
+
+const DEFAULT_NAMES = ["علي","فاروق","أبو ريا","عبده","اللاعب الخامس"];
+
+// -------- storage helpers (with in-memory fallback) --------
+const mem = {};
+async function sGet(key){
+  try{
+    const r = await window.storage.get(key, false);
+    return r ? JSON.parse(r.value) : null;
+  }catch(e){ return mem[key] ?? null; }
+}
+async function sSet(key, value){
+  try{ await window.storage.set(key, JSON.stringify(value), false); }
+  catch(e){ mem[key] = value; }
+}
+
+let state = { names: DEFAULT_NAMES.slice(), currentPerson: 0, data: {} };
+
+function allExercises(){
+  return PROGRAM.flatMap(d => d.exercises.map(e => ({...e, day:d.day, dayTitle:d.title})));
+}
+
+// -------- render program view --------
+function renderProgram(){
+  const el = document.getElementById('programView');
+  const badge = document.getElementById('splitBadge');
+  badge.innerHTML = PROGRAM.map(d => `<span class="${d.rest?'':'on'}">${d.day}</span>`).join('');
+
+  el.innerHTML = PROGRAM.map(d => {
+    if(d.rest){
+      return `<div class="day-card">
+        <div class="day-head">
+          <div class="day-num rest">${d.day}</div>
+          <div><div class="day-title">${d.title}</div><div class="day-sub">استشفاء عضلي — نوم كويس ومياه</div></div>
+        </div>
+      </div>`;
+    }
+    return `<div class="day-card">
+      <div class="day-head">
+        <div class="day-num">${d.day}</div>
+        <div><div class="day-title">${d.title}</div><div class="day-sub">${d.exercises.length} تمارين</div></div>
+      </div>
+      <table>
+        <thead><tr><th>التمرين</th><th>مجموعات</th><th>تكرارات</th></tr></thead>
+        <tbody>
+          ${d.exercises.map(e => `<tr>
+            <td class="exname">${e.name}<span class="tag">${e.group}</span></td>
+            <td class="num">${e.sets}</td>
+            <td class="num">${e.reps}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  }).join('');
+}
+
+// -------- render tracker view --------
+async function renderTracker(){
+  const el = document.getElementById('trackerView');
+  el.innerHTML = `<div class="loading">جاري تحميل بيانات المتابعة...</div>`;
+
+  const savedNames = await sGet('names');
+  if(savedNames && savedNames.length === 5) state.names = savedNames;
+
+  const person = state.names[state.currentPerson];
+  const key = `progress:${state.currentPerson}`;
+  let logs = await sGet(key);
+  if(!logs) logs = {};
+  state.data[state.currentPerson] = logs;
+
+  const exs = allExercises();
+
+  el.innerHTML = `
+    <div class="person-grid" id="personGrid"></div>
+    <input class="editname" id="nameInput" value="${person}" />
+    <div id="exList"></div>
+  `;
+
+  document.getElementById('personGrid').innerHTML = state.names.map((n,i) =>
+    `<div class="person-chip ${i===state.currentPerson?'active':''}" data-idx="${i}">👤 ${n}</div>`
+  ).join('');
+
+  document.getElementById('personGrid').querySelectorAll('.person-chip').forEach(chip => {
+    chip.onclick = async () => {
+      state.currentPerson = parseInt(chip.dataset.idx);
+      await renderTracker();
+    };
+  });
+
+  document.getElementById('nameInput').onchange = async (ev) => {
+    state.names[state.currentPerson] = ev.target.value.trim() || DEFAULT_NAMES[state.currentPerson];
+    await sSet('names', state.names);
+    await renderTracker();
+  };
+
+  let daysHtml = '';
+  let lastDay = null;
+  exs.forEach(e => {
+    if(e.day !== lastDay){
+      daysHtml += `<h3 style="margin:22px 0 8px; color:var(--muted); font-size:14px;">اليوم ${e.day} — ${e.dayTitle}</h3>`;
+      lastDay = e.day;
+    }
+    const hist = (logs[e.id] || []).slice().sort((a,b)=> new Date(b.date)-new Date(a.date));
+    const best = hist.reduce((m,h)=> Math.max(m, parseFloat(h.weight)||0), 0);
+    daysHtml += `
+      <div class="day-card" style="margin-bottom:10px;">
+        <div class="day-head" style="padding:12px 16px;">
+          <div style="flex:1;">
+            <div class="day-title" style="font-size:14.5px;">${e.name}</div>
+            <div class="day-sub">${e.sets} × ${e.reps}</div>
+          </div>
+        </div>
+        <div style="padding:10px 16px 14px;">
+          <div class="log-row">
+            <input type="number" step="0.5" placeholder="كيلو" class="w-input" data-ex="${e.id}">
+            <input type="number" placeholder="عدد تكرارات" class="r-input" data-ex="${e.id}">
+            <button data-ex="${e.id}">حفظ</button>
+          </div>
+          <div class="hist" id="hist-${e.id}">
+            ${hist.length ? hist.map((h,idx) => `
+              <div class="hist-item">
+                <span>${h.date}</span>
+                <span><b class="${parseFloat(h.weight)===best && best>0 ? 'pr' : ''}">${h.weight} كجم</b> × ${h.reps} تكرار ${parseFloat(h.weight)===best && best>0 ? ' 🏆' : ''}</span>
+                <span class="del" data-ex="${e.id}" data-idx="${idx}">✕</span>
+              </div>`).join('') : '<div class="empty-hist">لسه مفيش سجل — سجّل أول وزن</div>'}
+          </div>
+        </div>
+      </div>`;
+  });
+  document.getElementById('exList').insertAdjacentHTML('beforeend', daysHtml);
+
+  document.getElementById('exList').querySelectorAll('button').forEach(btn => {
+    btn.onclick = async () => {
+      const exId = btn.dataset.ex;
+      const wInput = document.querySelector(`.w-input[data-ex="${exId}"]`);
+      const rInput = document.querySelector(`.r-input[data-ex="${exId}"]`);
+      const weight = wInput.value, reps = rInput.value;
+      if(!weight){ wInput.focus(); return; }
+      const key2 = `progress:${state.currentPerson}`;
+      let logs2 = await sGet(key2) || {};
+      if(!logs2[exId]) logs2[exId] = [];
+      logs2[exId].push({date: new Date().toISOString().slice(0,10), weight, reps: reps || '-'});
+      await sSet(key2, logs2);
+      wInput.value=''; rInput.value='';
+      await renderTracker();
+    };
+  });
+
+  document.getElementById('exList').querySelectorAll('.del').forEach(d => {
+    d.onclick = async () => {
+      const exId = d.dataset.ex, idx = parseInt(d.dataset.idx);
+      const key2 = `progress:${state.currentPerson}`;
+      let logs2 = await sGet(key2) || {};
+      const sorted = (logs2[exId]||[]).slice().sort((a,b)=> new Date(b.date)-new Date(a.date));
+      const target = sorted[idx];
+      logs2[exId] = logs2[exId].filter(h => !(h.date===target.date && h.weight===target.weight && h.reps===target.reps));
+      await sSet(key2, logs2);
+      await renderTracker();
+    };
+  });
+}
+
+// -------- tabs --------
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.onclick = async () => {
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const view = tab.dataset.view;
+    document.getElementById('programView').style.display = view==='program' ? '' : 'none';
+    document.getElementById('trackerView').style.display = view==='tracker' ? '' : 'none';
+    if(view==='tracker') await renderTracker();
+  };
+});
+
+renderProgram();
+</script>
+</body>
+</html>

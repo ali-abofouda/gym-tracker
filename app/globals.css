@@ -2,40 +2,65 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Design Tokens ─────────────────────────────────── */
 :root {
-  --bg: #131417;
-  --surface: #1b1d22;
-  --surface-raised: #212328;
-  --line: #2c2f36;
-  --text: #ECEDEE;
-  --muted: #8A8F98;
-  --accent: #E5484D;
-  --accent-dim: #4a1e20;
-  --gold: #D9A441;
-  --ok: #3FB27F;
+  --bg:            #0e0f12;
+  --surface:       #16181d;
+  --surface-raised:#1c1e24;
+  --line:          #252830;
+  --line-bright:   #2e313b;
+  --text:          #EDEEF0;
+  --muted:         #7a7f8c;
+  --muted-bright:  #9ba0ae;
+
+  /* Accent — vibrant orange-red gradient */
+  --accent:        #FF4E42;
+  --accent-end:    #FF7A2F;
+  --accent-dim:    #3d1a18;
+  --accent-glow:   rgba(255, 78, 66, 0.25);
+
+  /* Gold — PR / champion */
+  --gold:          #F0B429;
+  --gold-dim:      #2d2208;
+  --gold-glow:     rgba(240, 180, 41, 0.22);
+
+  /* OK — logged weight */
+  --ok:            #34D399;
+  --ok-dim:        #0d2d22;
+  --ok-glow:       rgba(52, 211, 153, 0.2);
+
+  /* Shadows */
+  --shadow-sm:     0 2px 8px rgba(0,0,0,0.35);
+  --shadow-md:     0 8px 24px rgba(0,0,0,0.45);
+  --shadow-lg:     0 16px 48px rgba(0,0,0,0.55);
 }
 
-* {
+/* ─── Reset ──────────────────────────────────────────── */
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
+/* ─── Background with noise texture ─────────────────── */
 html {
   background: var(--bg);
+  min-height: 100%;
 }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")
+    repeat,
+    var(--bg);
   color: var(--text);
   font-family: var(--font-cairo), sans-serif;
   -webkit-tap-highlight-color: transparent;
   padding-bottom: env(safe-area-inset-bottom, 0);
+  -webkit-font-smoothing: antialiased;
 }
 
-h1,
-h2,
-h3,
-.disp {
+/* ─── Typography ─────────────────────────────────────── */
+h1, h2, h3, .disp {
   font-family: var(--font-oswald), sans-serif;
   letter-spacing: .5px;
 }
@@ -44,18 +69,55 @@ h3,
   font-family: var(--font-jetbrains), monospace;
 }
 
-input,
-button {
+input, button {
   font: inherit;
 }
 
+/* ─── Gradient accent text ───────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-end) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-gold {
+  background: linear-gradient(135deg, var(--gold) 0%, #ffd97d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Gradient backgrounds ───────────────────────────── */
+.gradient-accent-bg {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-end) 100%);
+}
+
+/* ─── Glow utilities ─────────────────────────────────── */
+.glow-accent {
+  box-shadow: 0 0 16px var(--accent-glow), 0 0 4px var(--accent-glow);
+}
+.glow-gold {
+  box-shadow: 0 0 16px var(--gold-glow), 0 0 4px var(--gold-glow);
+}
+.glow-ok {
+  box-shadow: 0 0 12px var(--ok-glow);
+}
+
+/* ─── Glass morphism ─────────────────────────────────── */
+.glass {
+  background: rgba(22, 24, 29, 0.85);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+}
+
+/* ─── Table ──────────────────────────────────────────── */
 table {
   width: 100%;
   border-collapse: collapse;
 }
 
-th,
-td {
+th, td {
   padding: 10px 14px;
   text-align: right;
   font-size: 14px;
@@ -64,17 +126,18 @@ td {
 th {
   color: var(--muted);
   font-weight: 600;
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: .5px;
+  letter-spacing: .8px;
 }
 
 tbody tr {
   border-top: 1px solid var(--line);
+  transition: background 0.15s ease;
 }
 
 tbody tr:hover {
-  background: #1f2126;
+  background: #1c1e24;
 }
 
 @media (max-width: 640px) {
@@ -82,4 +145,75 @@ tbody tr:hover {
     padding: 8px 10px;
     font-size: 12px;
   }
+}
+
+/* ─── Animations ─────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 6px var(--accent-glow); }
+  50%       { box-shadow: 0 0 18px var(--accent-glow), 0 0 32px var(--accent-glow); }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 6px var(--gold-glow); }
+  50%       { box-shadow: 0 0 18px var(--gold-glow), 0 0 32px var(--gold-glow); }
+}
+
+@keyframes dot-pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ─── Animation utilities ────────────────────────────── */
+.animate-fade-in-up {
+  animation: fadeInUp 0.35s ease both;
+}
+.animate-fade-in {
+  animation: fadeIn 0.25s ease both;
+}
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.08) 50%,
+    transparent 100%
+  );
+  background-size: 200% auto;
+  animation: shimmer 1.5s linear infinite;
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+.animate-pulse-gold {
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+.animate-spin {
+  animation: spin 0.8s linear infinite;
+}
+.animate-slide-in {
+  animation: slide-in 0.3s ease both;
 }

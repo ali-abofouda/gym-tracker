@@ -5,9 +5,9 @@ import { usePathname } from "next/navigation";
 import { signOut } from "@/app/login/actions";
 
 const links = [
-  { href: "/program", label: "البرنامج" },
-  { href: "/tracker", label: "الأوزان" },
-  { href: "/leaderboard", label: "المنافسة" }
+  { href: "/program",     label: "البرنامج",  icon: "📋" },
+  { href: "/tracker",     label: "الأوزان",   icon: "🏋️" },
+  { href: "/leaderboard", label: "المنافسة",  icon: "🏆" }
 ] as const;
 
 export function NavBar({
@@ -20,9 +20,18 @@ export function NavBar({
   const pathname = usePathname();
 
   return (
-    <nav className="sticky top-0 z-20 mb-4 sm:mb-[22px] rounded-xl border border-line bg-[#181a1f]/95 p-1.5 sm:p-2 shadow-[0_12px_30px_rgba(0,0,0,0.22)] backdrop-blur">
+    <nav
+      className="sticky top-0 z-20 mb-5 sm:mb-6 rounded-2xl p-1.5 sm:p-2"
+      style={{
+        background: "rgba(18, 20, 26, 0.88)",
+        backdropFilter: "blur(20px) saturate(180%)",
+        WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        border: "1px solid var(--line-bright)",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)"
+      }}
+    >
       <div className="flex items-center gap-1.5 sm:gap-2">
-        {/* Nav links — take all remaining width */}
+        {/* Nav links */}
         <div className="grid flex-1 grid-cols-3 gap-1.5 sm:gap-2">
           {links.map((link) => {
             const isActive = pathname === link.href || (pathname === "/" && link.href === "/program");
@@ -31,33 +40,65 @@ export function NavBar({
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-lg border py-2 sm:py-2.5 text-center text-[11px] sm:text-sm font-bold transition leading-tight ${
+                className={`relative flex items-center justify-center gap-1.5 rounded-xl py-2.5 sm:py-3 text-[11px] sm:text-[13px] font-bold transition-all duration-200 leading-tight overflow-hidden ${
                   isActive
-                    ? "border-accent bg-accent text-white"
-                    : "border-line bg-surface text-muted hover:border-[#3a3d45] hover:text-text"
+                    ? "text-white"
+                    : "text-[var(--muted)] hover:text-[var(--text)]"
                 }`}
+                style={
+                  isActive
+                    ? {
+                        background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-end) 100%)",
+                        boxShadow: "0 4px 16px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.15)"
+                      }
+                    : {
+                        background: "var(--surface-raised)",
+                        border: "1px solid var(--line)"
+                      }
+                }
               >
-                {link.label}
+                {/* Shimmer on active */}
+                {isActive && (
+                  <span
+                    className="pointer-events-none absolute inset-0 animate-shimmer rounded-xl"
+                    aria-hidden
+                  />
+                )}
+                <span className="text-base sm:text-lg leading-none">{link.icon}</span>
+                <span>{link.label}</span>
               </Link>
             );
           })}
         </div>
 
-        {/* User area — stays on same row */}
+        {/* User area */}
         <div className="flex shrink-0 items-center gap-1.5">
           {profileId ? (
             <>
-              <span className="hidden sm:block max-w-[80px] truncate text-xs font-bold text-gold">{displayName}</span>
+              {displayName && (
+                <span
+                  className="hidden sm:block max-w-[90px] truncate text-xs font-bold gradient-gold"
+                >
+                  {displayName}
+                </span>
+              )}
               <form action={signOut}>
-                <button className="rounded-lg border border-line bg-surface px-2.5 py-2 sm:px-3 text-xs sm:text-sm font-bold text-muted transition hover:border-[#3a3d45] hover:text-text whitespace-nowrap">
+                <button
+                  className="rounded-xl border border-[var(--line)] bg-[var(--surface-raised)] px-3 py-2.5 text-xs font-bold text-[var(--muted)] transition-all duration-200 hover:border-[var(--line-bright)] hover:text-[var(--text)] whitespace-nowrap"
+                  style={{ boxShadow: "var(--shadow-sm)" }}
+                >
                   خروج
                 </button>
               </form>
             </>
           ) : (
             <Link
-              className="rounded-lg border border-accent bg-accent px-3 py-2 text-xs sm:text-sm font-bold text-white transition hover:bg-[#c73438] whitespace-nowrap"
+              className="rounded-xl px-3 py-2.5 text-xs sm:text-sm font-bold text-white transition-all duration-200 whitespace-nowrap"
               href="/login"
+              style={{
+                background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-end) 100%)",
+                boxShadow: "0 4px 14px var(--accent-glow)"
+              }}
             >
               دخول
             </Link>

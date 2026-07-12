@@ -162,18 +162,18 @@ function DayFilterBar({
 }) {
   return (
     <div
-      className="mb-4 rounded-2xl p-2 overflow-x-auto"
+      className="mb-4 rounded-2xl overflow-hidden"
       style={{
         background: "var(--surface)",
         border: "1px solid var(--line)",
         boxShadow: "var(--shadow-sm)"
       }}
     >
-      <div className="flex gap-1.5 min-w-max">
+      <div className="flex overflow-x-auto p-1.5 gap-1 scrollbar-hide">
         {/* "الكل" button */}
         <button
           onClick={() => onSelect(null)}
-          className="rounded-xl px-3 py-2 text-[11px] sm:text-xs font-bold transition-all duration-200 whitespace-nowrap"
+          className="shrink-0 rounded-xl px-3 py-2 text-[11px] font-bold transition-all duration-200 whitespace-nowrap flex items-center gap-1"
           style={
             selectedDay === null
               ? {
@@ -188,7 +188,7 @@ function DayFilterBar({
                 }
           }
         >
-          📋 الكل
+          <span>الكل</span>
         </button>
 
         {days.map(({ day, title, isRest }) => {
@@ -198,37 +198,34 @@ function DayFilterBar({
             <button
               key={day}
               onClick={() => onSelect(day)}
-              className="rounded-xl px-3 py-2 text-[11px] sm:text-xs font-bold transition-all duration-200 whitespace-nowrap flex items-center gap-1.5"
-              style={
-                isActive
+              className="shrink-0 rounded-xl py-2 transition-all duration-200 whitespace-nowrap flex items-center gap-1.5"
+              style={{
+                padding: "8px 10px",
+                ...(isActive
                   ? {
                       background: isToday
                         ? "linear-gradient(135deg, var(--gold), #ffd97d)"
                         : "linear-gradient(135deg, var(--accent), var(--accent-end))",
                       color: "white",
-                      boxShadow: isToday
-                        ? "0 2px 10px var(--gold-glow)"
-                        : "0 2px 10px var(--accent-glow)"
+                      boxShadow: isToday ? "0 2px 10px var(--gold-glow)" : "0 2px 10px var(--accent-glow)"
                     }
                   : {
                       background: "var(--surface-raised)",
-                      border: isToday
-                        ? "1px solid rgba(240,180,41,0.35)"
-                        : "1px solid var(--line)",
-                      color: isToday ? "var(--gold)" : isRest ? "var(--muted)" : "var(--muted-bright)"
-                    }
-              }
+                      border: isToday ? "1px solid rgba(240,180,41,0.35)" : "1px solid var(--line)",
+                      color: isToday ? "var(--gold)" : "var(--muted-bright)"
+                    })
+              }}
             >
+              {/* Day number circle */}
               <span
-                className="num flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-bold"
-                style={{
-                  background: isActive ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.05)"
-                }}
+                className="num flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-bold shrink-0"
+                style={{ background: isActive ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.06)" }}
               >
                 {day}
               </span>
-              <span className="hidden sm:inline">{title}</span>
-              {isToday && <span className="text-[9px]">🔥</span>}
+              {/* Title — hidden on very small screens, shown on sm+ */}
+              <span className="hidden xs:inline sm:inline text-[11px] font-bold">{title.split(" ")[0]}</span>
+              {isToday && <span className="text-[10px] leading-none">🔥</span>}
             </button>
           );
         })}

@@ -47,22 +47,22 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             {/* Title block */}
             <div className="min-w-0">
               <div
-                className="font-oswald text-[10px] sm:text-[12px] uppercase tracking-[3px] mb-1"
+                className="font-oswald text-[10px] sm:text-[12px] uppercase tracking-[3px] mb-1 truncate"
                 style={{ color: "var(--accent)" }}
               >
-                Weekly Split — Bro Split Hybrid
+                <span className="hidden sm:inline">Weekly Split — </span>Bro Split Hybrid
               </div>
-              <h1 className="m-0 text-[22px] sm:text-[32px] font-bold leading-tight tracking-tight gradient-text">
+              <h1 className="m-0 text-[20px] sm:text-[30px] font-bold leading-tight tracking-tight gradient-text">
                 برنامج التمرين الأسبوعي
               </h1>
             </div>
 
-            {/* Day badges */}
-            <div className="hidden xs:flex flex-wrap gap-1.5 justify-end shrink-0 sm:flex sm:gap-2">
+            {/* Day badges — hidden on xs screens to prevent overflow */}
+            <div className="hidden sm:flex flex-wrap gap-1.5 justify-end shrink-0">
               {PROGRAM.map((day) => (
                 <span
                   key={day.day}
-                  className={`num flex h-[26px] w-[26px] sm:h-[30px] sm:w-[30px] items-center justify-center rounded-lg text-[10px] sm:text-[12px] font-bold transition-all duration-200 ${
+                  className={`num flex h-[28px] w-[28px] sm:h-[30px] sm:w-[30px] items-center justify-center rounded-lg text-[11px] sm:text-[12px] font-bold transition-all duration-200 ${
                     day.rest
                       ? "border border-[var(--line)] bg-[var(--surface)] text-[var(--muted)]"
                       : "gradient-accent-bg text-white glow-accent"

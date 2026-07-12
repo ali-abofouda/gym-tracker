@@ -10,7 +10,12 @@ type ActionResult =
   | { ok: true; deletedId: string; log?: never }
   | { ok: false; error: string };
 
-export async function saveWorkoutLog(exerciseId: string, weight: string, reps: string): Promise<ActionResult> {
+export async function saveWorkoutLog(
+  exerciseId: string,
+  weight: string,
+  reps: string,
+  note?: string
+): Promise<ActionResult> {
   const profileId = await getSessionProfileId();
   if (!profileId) return { ok: false, error: "لازم تسجل دخول الأول." };
 
@@ -25,6 +30,8 @@ export async function saveWorkoutLog(exerciseId: string, weight: string, reps: s
     return { ok: false, error: "اكتب عدد تكرارات صحيح." };
   }
 
+  const trimmedNote = note?.trim() || null;
+
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("workout_logs")
@@ -33,6 +40,7 @@ export async function saveWorkoutLog(exerciseId: string, weight: string, reps: s
       exercise_id: exerciseId,
       weight: parsedWeight,
       reps: parsedReps,
+      note: trimmedNote,
       logged_at: new Date().toISOString().slice(0, 10)
     })
     .select("*")
@@ -42,6 +50,7 @@ export async function saveWorkoutLog(exerciseId: string, weight: string, reps: s
 
   revalidatePath("/tracker");
   revalidatePath("/leaderboard");
+  revalidatePath("/stats");
   return { ok: true, log: data };
 }
 
@@ -60,5 +69,6 @@ export async function deleteWorkoutLog(logId: string): Promise<ActionResult> {
 
   revalidatePath("/tracker");
   revalidatePath("/leaderboard");
+  revalidatePath("/stats");
   return { ok: true, deletedId: logId };
 }

@@ -22,6 +22,7 @@ export type WorkoutLog = {
   exercise_id: string;
   weight: number;
   reps: number | null;
+  note: string | null;
   logged_at: string;
   created_at: string;
 };
@@ -34,4 +35,12 @@ export type ExerciseWithDay = {
   group: string;
   day: number;
   dayTitle: string;
+};
+
+export type BodyWeightLog = {
+  id: string;
+  user_id: string;
+  weight_kg: number;
+  logged_at: string;
+  created_at: string;
 };

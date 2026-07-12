@@ -5,9 +5,10 @@ import { usePathname } from "next/navigation";
 import { signOut } from "@/app/login/actions";
 
 const links = [
-  { href: "/program",     label: "البرنامج",  icon: "📋" },
-  { href: "/tracker",     label: "الأوزان",   icon: "🏋️" },
-  { href: "/leaderboard", label: "المنافسة",  icon: "🏆" }
+  { href: "/program",     label: "البرنامج" },
+  { href: "/tracker",     label: "الأوزان" },
+  { href: "/leaderboard", label: "المنافسة" },
+  { href: "/stats",       label: "تقدمي" },
 ] as const;
 
 export function NavBar({
@@ -31,19 +32,19 @@ export function NavBar({
       }}
     >
       <div className="flex items-center gap-1.5 sm:gap-2">
-        {/* Nav links */}
-        <div className="grid flex-1 grid-cols-3 gap-1.5 sm:gap-2">
+        {/* Nav links — 4 columns */}
+        <div className="grid flex-1 grid-cols-4 gap-1 sm:gap-1.5">
           {links.map((link) => {
-            const isActive = pathname === link.href || (pathname === "/" && link.href === "/program");
+            const isActive =
+              pathname === link.href ||
+              (pathname === "/" && link.href === "/program");
 
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative flex items-center justify-center gap-1.5 rounded-xl py-2.5 sm:py-3 text-[11px] sm:text-[13px] font-bold transition-all duration-200 leading-tight overflow-hidden ${
-                  isActive
-                    ? "text-white"
-                    : "text-[var(--muted)] hover:text-[var(--text)]"
+                className={`relative flex items-center justify-center rounded-xl py-2 sm:py-2.5 text-[10px] sm:text-[12px] font-bold transition-all duration-200 leading-tight overflow-hidden ${
+                  isActive ? "text-white" : "text-[var(--muted)] hover:text-[var(--text)]"
                 }`}
                 style={
                   isActive
@@ -57,43 +58,39 @@ export function NavBar({
                       }
                 }
               >
-                {/* Shimmer on active */}
                 {isActive && (
                   <span
                     className="pointer-events-none absolute inset-0 animate-shimmer rounded-xl"
                     aria-hidden
                   />
                 )}
-                <span className="text-base sm:text-lg leading-none">{link.icon}</span>
-                <span>{link.label}</span>
+                {link.label}
               </Link>
             );
           })}
         </div>
 
         {/* User area */}
-        <div className="flex shrink-0 items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-1">
           {profileId ? (
             <>
               {displayName && (
-                <span
-                  className="hidden sm:block max-w-[90px] truncate text-xs font-bold gradient-gold"
-                >
+                <span className="hidden sm:block max-w-[80px] truncate text-xs font-bold gradient-gold">
                   {displayName}
                 </span>
               )}
               <form action={signOut}>
                 <button
-                  className="rounded-xl border border-[var(--line)] bg-[var(--surface-raised)] px-3 py-2.5 text-xs font-bold text-[var(--muted)] transition-all duration-200 hover:border-[var(--line-bright)] hover:text-[var(--text)] whitespace-nowrap"
+                  className="rounded-xl border border-[var(--line)] bg-[var(--surface-raised)] px-2.5 py-2 text-xs font-bold text-[var(--muted)] transition-all duration-200 hover:border-[var(--line-bright)] hover:text-[var(--text)] whitespace-nowrap"
                   style={{ boxShadow: "var(--shadow-sm)" }}
                 >
-                  خروج
+                  ⤴
                 </button>
               </form>
             </>
           ) : (
             <Link
-              className="rounded-xl px-3 py-2.5 text-xs sm:text-sm font-bold text-white transition-all duration-200 whitespace-nowrap"
+              className="rounded-xl px-3 py-2 text-xs font-bold text-white transition-all duration-200 whitespace-nowrap"
               href="/login"
               style={{
                 background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-end) 100%)",
